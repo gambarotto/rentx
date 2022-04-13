@@ -14,8 +14,8 @@ import {
 import AppLoading from 'expo-app-loading';
 import { ThemeProvider } from 'styled-components';
 
-import CarDetails from './src/screens/CarDetails';
 import theme from './src/styles/theme';
+import Routes from './src/routes';
 
 const App: React.FC = () => {
   const [fontsLoaded] = useFonts({
@@ -31,7 +31,7 @@ const App: React.FC = () => {
   }
   return (
     <ThemeProvider theme={theme}>
-      <CarDetails />
+      <Routes />
     </ThemeProvider>
   );
 };
