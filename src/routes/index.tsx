@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import StackRoutes from './stack.routes';
+import type { StackScreenProps } from '@react-navigation/stack';
+import StackRoutes, { StackParamList } from './stack.routes';
 
 const Routes: React.FC = () => (
   <NavigationContainer>
@@ -9,3 +11,12 @@ const Routes: React.FC = () => (
 );
 
 export default Routes;
+
+export type RootStackScreenProps<T extends keyof StackParamList> =
+  StackScreenProps<StackParamList, T>;
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends StackParamList {}
+  }
+}

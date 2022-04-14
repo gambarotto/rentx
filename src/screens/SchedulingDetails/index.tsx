@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useNavigation } from '@react-navigation/native';
+
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from 'styled-components';
 import { RFValue } from 'react-native-responsive-fontsize';
+
 import BackButton from '../../components/BackButton';
 import Accessory from '../../components/Accessory';
 import ImageSlider from '../../components/ImageSlider';
@@ -42,6 +45,13 @@ import Button from '../../components/Button';
 
 const SchedulingDetails: React.FC = () => {
   const theme = useTheme();
+
+  const navigation = useNavigation();
+
+  const handleSchedulingComplete = useCallback(() => {
+    navigation.navigate('SchedulingComplete');
+  }, [navigation]);
+
   return (
     <Container>
       <Header>
@@ -109,7 +119,11 @@ const SchedulingDetails: React.FC = () => {
         </RentalPrice>
       </Content>
       <Footer>
-        <Button title="Alugar agora" color={theme.colors.success} />
+        <Button
+          onPress={handleSchedulingComplete}
+          title="Alugar agora"
+          color={theme.colors.success}
+        />
       </Footer>
     </Container>
   );

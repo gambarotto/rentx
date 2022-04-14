@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { BorderlessButtonProps } from 'react-native-gesture-handler';
+
 import { useTheme } from 'styled-components';
+import { TouchableOpacityProps } from 'react-native';
 import { Container } from './styles';
 
-interface Props extends BorderlessButtonProps {
+interface Props extends TouchableOpacityProps {
   color?: string;
 }
 const BackButton: React.FC<Props> = ({ color, ...rest }) => {
   const theme = useTheme();
+  const navigation = useNavigation();
+
+  const handleGoBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
   return (
-    <Container {...rest}>
+    <Container onPress={handleGoBack} {...rest}>
       <MaterialIcons
         name="chevron-left"
         size={24}
