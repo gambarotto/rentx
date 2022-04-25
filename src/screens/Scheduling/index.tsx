@@ -28,9 +28,7 @@ import { getDateAdjusted } from '../../utils/getDateAdjusted';
 import { RootStackScreenProps } from '../../routes';
 
 interface RentalPeriod {
-  start: number;
   startFormatted: string;
-  end: number;
   endFormatted: string;
 }
 
@@ -51,15 +49,16 @@ const Scheduling: React.FC = () => {
   } = useRoute<RootStackScreenProps<'Scheduling'>['route']>();
 
   const handleConfirmRental = useCallback(() => {
-    if (!rentalPeriod.start || !rentalPeriod.end) {
+    if (!rentalPeriod.startFormatted || !rentalPeriod.endFormatted) {
       Alert.alert('Selecione o intervalo para alugar');
       return;
     }
     navigation.navigate('SchedulingDetails', {
       car,
       dates: Object.keys(markedDates),
+      rentalPeriod,
     });
-  }, [car, markedDates, navigation, rentalPeriod.end, rentalPeriod.start]);
+  }, [car, markedDates, navigation, rentalPeriod]);
 
   const handleChangeDate = useCallback(
     (date: DayProps) => {
@@ -78,12 +77,10 @@ const Scheduling: React.FC = () => {
       const endDate = Object.keys(interval)[Object.keys(interval).length - 1];
 
       setRentalPeriod({
-        start: start.timestamp,
         startFormatted: format(
           getDateAdjusted(new Date(firstDate)),
           'dd/MM/yyyy',
         ),
-        end: end.timestamp,
         endFormatted: format(getDateAdjusted(new Date(endDate)), 'dd/MM/yyyy'),
       });
     },

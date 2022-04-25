@@ -1,20 +1,14 @@
 import React, { useCallback } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from 'styled-components';
 import { RFValue } from 'react-native-responsive-fontsize';
 
+import { Alert } from 'react-native';
 import BackButton from '../../components/BackButton';
 import Accessory from '../../components/Accessory';
 import ImageSlider from '../../components/ImageSlider';
-
-import speedSvg from '../../assets/speed.svg';
-import accelerationSvg from '../../assets/acceleration.svg';
-import forceSvg from '../../assets/force.svg';
-import gasolineSvg from '../../assets/gasoline.svg';
-import exchangeSvg from '../../assets/exchange.svg';
-import peopleSvg from '../../assets/people.svg';
 
 import {
   Container,
@@ -42,15 +36,39 @@ import {
   Footer,
 } from './styles';
 import Button from '../../components/Button';
+import { RootStackScreenProps } from '../../routes';
+import getAccessoryIcon from '../../utils/getAccessoryIcon';
+import api from '../../services/api';
 
 const SchedulingDetails: React.FC = () => {
   const theme = useTheme();
 
   const navigation = useNavigation();
+  const {
+    params: { car, dates, rentalPeriod },
+  } = useRoute<RootStackScreenProps<'SchedulingDetails'>['route']>();
 
-  const handleSchedulingComplete = useCallback(() => {
-    navigation.navigate('SchedulingComplete');
-  }, [navigation]);
+  const handleConfirmRental = useCallback(async () => {
+    try {
+      const response = await api.get(`/schedules_bycars/${car.id}`);
+
+      const unavailable_dates = [...response.data.unavailable_dates, ...dates];
+
+      await api.post('/schedules_byuser', {
+        user_id: 1,
+        car,
+      });
+      await api.put(`/schedules_bycars/${car.id}`, {
+        id: car.id,
+        unavailable_dates,
+      });
+      navigation.navigate('SchedulingComplete');
+    } catch (error) {
+      console.log(error);
+
+      Alert.alert('Não foi possível confirmar o agendamento');
+    }
+  }, [car, dates, navigation]);
 
   return (
     <Container>
@@ -58,30 +76,29 @@ const SchedulingDetails: React.FC = () => {
         <BackButton />
       </Header>
       <CarImages>
-        <ImageSlider
-          imagesUrl={['https://www.pngmart.com/files/1/Audi-RS5-Red-PNG.png']}
-        />
+        <ImageSlider imagesUrl={car.photos} />
       </CarImages>
 
       <Content>
         <Details>
           <Description>
-            <Brand>Audi</Brand>
-            <Name>RS 5 Coupé</Name>
+            <Brand>{car.brand}</Brand>
+            <Name>{car.name}</Name>
           </Description>
 
           <Rent>
-            <Period>Ao dia</Period>
-            <Price>R$ 580,00</Price>
+            <Period>{car.rent.period}</Period>
+            <Price>R$ {car.rent.price}</Price>
           </Rent>
         </Details>
         <Accessories>
-          <Accessory name="380km/s" icon={speedSvg} />
-          <Accessory name="3.2s" icon={accelerationSvg} />
-          <Accessory name="800 HP" icon={forceSvg} />
-          <Accessory name="Gasolina" icon={gasolineSvg} />
-          <Accessory name="Auto" icon={exchangeSvg} />
-          <Accessory name="2 pessoas" icon={peopleSvg} />
+          {car.accessories.map((accessory) => (
+            <Accessory
+              key={accessory.type}
+              name={accessory.name}
+              icon={getAccessoryIcon(accessory.type)}
+            />
+          ))}
         </Accessories>
 
         <RentalPeriod>
@@ -95,7 +112,7 @@ const SchedulingDetails: React.FC = () => {
 
           <DateInfo>
             <DateTitle>DE</DateTitle>
-            <DateValue>18/06/2022</DateValue>
+            <DateValue>{rentalPeriod.startFormatted}</DateValue>
           </DateInfo>
 
           <Feather
@@ -106,21 +123,25 @@ const SchedulingDetails: React.FC = () => {
 
           <DateInfo>
             <DateTitle>ATÉ</DateTitle>
-            <DateValue>18/06/2022</DateValue>
+            <DateValue>{rentalPeriod.endFormatted}</DateValue>
           </DateInfo>
         </RentalPeriod>
 
         <RentalPrice>
           <RentalPriceLabel>TOTAL</RentalPriceLabel>
           <RentalPriceDetails>
-            <RentalPriceQuota>R$ 580,00 x3 diárias</RentalPriceQuota>
-            <RentalPriceTotal>R$ 2.900,00</RentalPriceTotal>
+            <RentalPriceQuota>
+              {`R$ ${car.rent.price} x${dates.length} diárias`}
+            </RentalPriceQuota>
+            <RentalPriceTotal>
+              R$ {Number(car.rent.price * dates.length)}
+            </RentalPriceTotal>
           </RentalPriceDetails>
         </RentalPrice>
       </Content>
       <Footer>
         <Button
-          onPress={handleSchedulingComplete}
+          onPress={handleConfirmRental}
           title="Alugar agora"
           color={theme.colors.success}
         />

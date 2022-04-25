@@ -7,12 +7,23 @@ import Scheduling from '../screens/Scheduling';
 import SchedulingDetails from '../screens/SchedulingDetails';
 import SchedulingComplete from '../screens/SchedulingComplete';
 import { CarDTO } from '../dtos/CarDTO';
+import MyCars from '../screens/MyCars';
+
+interface RentalPeriod {
+  startFormatted: string;
+  endFormatted: string;
+}
 
 export type StackParamList = {
   Home: undefined;
+  MyCars: undefined;
   CarDetails: { car: CarDTO };
   Scheduling: { car: CarDTO };
-  SchedulingDetails: { car: CarDTO; dates: string[] };
+  SchedulingDetails: {
+    car: CarDTO;
+    dates: string[];
+    rentalPeriod: RentalPeriod;
+  };
   SchedulingComplete: undefined;
 };
 
@@ -25,6 +36,7 @@ const StackRoutes: React.FC = () => (
     }}
   >
     <Screen name="Home" component={Home} />
+    <Screen name="MyCars" component={MyCars} />
     <Screen name="CarDetails" component={CarDetails} />
     <Screen name="Scheduling" component={Scheduling} />
     <Screen name="SchedulingDetails" component={SchedulingDetails} />
