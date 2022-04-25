@@ -33,8 +33,8 @@ const CarDetails: React.FC = () => {
   } = useRoute<RootStackScreenProps<'CarDetails'>['route']>();
 
   const handleConfirmRental = useCallback(() => {
-    navigation.navigate('Scheduling');
-  }, [navigation]);
+    navigation.navigate('Scheduling', { car });
+  }, [navigation, car]);
 
   return (
     <Container>
