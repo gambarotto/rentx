@@ -65,13 +65,34 @@ export const CarList = styled(
     props: FlatListProps<CarProps>,
   ) => FlatList<CarProps>,
 ).attrs({
-  contentContainerStyle: {
-    padding: 24,
-  },
+  contentContainerStyle: {},
   showsVerticalScrollIndicator: false,
 })``;
-export const CarWrapper = styled.View``;
-export const CarFooter = styled.View``;
-export const CarFooterTitle = styled.Text``;
-export const CarFooterPeriod = styled.View``;
-export const CarFooterDate = styled.Text``;
+export const CarWrapper = styled.View`
+  margin-bottom: 16px;
+`;
+export const CarFooter = styled.View`
+  width: 100%;
+
+  padding: 12px;
+  margin-top: -10px;
+
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  background-color: ${({ theme }) => theme.colors.background_secondary};
+`;
+export const CarFooterTitle = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.secondary_500};
+  font-size: ${RFValue(10)}px;
+  color: ${({ theme }) => theme.colors.text_detail};
+`;
+export const CarFooterPeriod = styled.View`
+  flex-direction: row;
+`;
+export const CarFooterDate = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.primary_400};
+  font-size: ${RFValue(13)}px;
+  color: ${({ theme }) => theme.colors.title};
+`;

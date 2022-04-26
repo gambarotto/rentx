@@ -4,6 +4,7 @@ import { StatusBar } from 'react-native';
 import { useTheme } from 'styled-components';
 import BackButton from '../../components/BackButton';
 import CardCar from '../../components/CardCar';
+import Load from '../../components/Load';
 import { CarDTO } from '../../dtos/CarDTO';
 import api from '../../services/api';
 
@@ -64,35 +65,39 @@ const MyCars: React.FC = () => {
         </Title>
         <SubTitle>Conforto, segurança e praticidade.</SubTitle>
       </Header>
-      <Content>
-        <Appoinntments>
-          <AppoinntmentsTitle>Carros Alugados</AppoinntmentsTitle>
-          <AppoinntmentsQuantity>05</AppoinntmentsQuantity>
-        </Appoinntments>
+      {loading ? (
+        <Load />
+      ) : (
+        <Content>
+          <Appoinntments>
+            <AppoinntmentsTitle>Carros Alugados</AppoinntmentsTitle>
+            <AppoinntmentsQuantity>{cars.length}</AppoinntmentsQuantity>
+          </Appoinntments>
 
-        <CarList
-          data={cars}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => (
-            <CarWrapper>
-              <CardCar data={item.car} />
-              <CarFooter>
-                <CarFooterTitle>Período</CarFooterTitle>
-                <CarFooterPeriod>
-                  <CarFooterDate>{item.startDate}</CarFooterDate>
-                  <AntDesign
-                    name="arrowright"
-                    size={20}
-                    color={theme.colors.title}
-                    style={{ marginHorizontal: 11 }}
-                  />
-                  <CarFooterDate>{item.endDate}</CarFooterDate>
-                </CarFooterPeriod>
-              </CarFooter>
-            </CarWrapper>
-          )}
-        />
-      </Content>
+          <CarList
+            data={cars}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => (
+              <CarWrapper>
+                <CardCar data={item.car} />
+                <CarFooter>
+                  <CarFooterTitle>Período</CarFooterTitle>
+                  <CarFooterPeriod>
+                    <CarFooterDate>{item.startDate}</CarFooterDate>
+                    <AntDesign
+                      name="arrowright"
+                      size={20}
+                      color={theme.colors.title}
+                      style={{ marginHorizontal: 11 }}
+                    />
+                    <CarFooterDate>{item.endDate}</CarFooterDate>
+                  </CarFooterPeriod>
+                </CarFooter>
+              </CarWrapper>
+            )}
+          />
+        </Content>
+      )}
     </Container>
   );
 };

@@ -5,12 +5,17 @@ import { Container, Title } from './styles';
 interface Props extends RectButtonProps {
   title: string;
   color?: string;
+  enabled?: boolean;
 }
 
-const Button: React.FC<Props> = ({ title, ...rest }) => (
-  <Container {...rest}>
-    <Title>{title}</Title>
-  </Container>
-);
+const Button: React.FC<Props> = ({ title, enabled, ...rest }) => {
+  console.log(enabled);
+
+  return (
+    <Container {...rest}>
+      <Title>{title}</Title>
+    </Container>
+  );
+};
 
 export default Button;

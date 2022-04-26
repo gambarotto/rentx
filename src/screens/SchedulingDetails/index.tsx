@@ -57,6 +57,8 @@ const SchedulingDetails: React.FC = () => {
       await api.post('/schedules_byuser', {
         user_id: 1,
         car,
+        startDate: rentalPeriod.startFormatted,
+        endDate: rentalPeriod.endFormatted,
       });
       await api.put(`/schedules_bycars/${car.id}`, {
         id: car.id,
@@ -68,7 +70,13 @@ const SchedulingDetails: React.FC = () => {
 
       Alert.alert('Não foi possível confirmar o agendamento');
     }
-  }, [car, dates, navigation]);
+  }, [
+    car,
+    dates,
+    navigation,
+    rentalPeriod.endFormatted,
+    rentalPeriod.startFormatted,
+  ]);
 
   return (
     <Container>
@@ -141,6 +149,7 @@ const SchedulingDetails: React.FC = () => {
       </Content>
       <Footer>
         <Button
+          enabled={false}
           onPress={handleConfirmRental}
           title="Alugar agora"
           color={theme.colors.success}
