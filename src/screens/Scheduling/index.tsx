@@ -27,7 +27,7 @@ import Calendar, {
 import { getDateAdjusted } from '../../utils/getDateAdjusted';
 import { RootStackScreenProps } from '../../routes';
 
-interface RentalPeriod {
+interface RentalPeriodProps {
   startFormatted: string;
   endFormatted: string;
 }
@@ -39,8 +39,8 @@ const Scheduling: React.FC = () => {
   const [markedDates, setMarkedDates] = useState<MarkedDateProps>(
     {} as MarkedDateProps,
   );
-  const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>(
-    {} as RentalPeriod,
+  const [rentalPeriod, setRentalPeriod] = useState<RentalPeriodProps>(
+    {} as RentalPeriodProps,
   );
   const theme = useTheme();
   const navigation = useNavigation();
@@ -121,7 +121,11 @@ const Scheduling: React.FC = () => {
         <Calendar markedDates={markedDates} onDayPress={handleChangeDate} />
       </Content>
       <Footer>
-        <Button title="Confirmar" onPress={handleConfirmRental} />
+        <Button
+          enabled={!!rentalPeriod.endFormatted}
+          title="Confirmar"
+          onPress={handleConfirmRental}
+        />
       </Footer>
     </Container>
   );

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { Feather } from '@expo/vector-icons';
@@ -41,6 +41,7 @@ import getAccessoryIcon from '../../utils/getAccessoryIcon';
 import api from '../../services/api';
 
 const SchedulingDetails: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const theme = useTheme();
 
   const navigation = useNavigation();
@@ -49,6 +50,7 @@ const SchedulingDetails: React.FC = () => {
   } = useRoute<RootStackScreenProps<'SchedulingDetails'>['route']>();
 
   const handleConfirmRental = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await api.get(`/schedules_bycars/${car.id}`);
 
@@ -67,6 +69,7 @@ const SchedulingDetails: React.FC = () => {
       navigation.navigate('SchedulingComplete');
     } catch (error) {
       console.log(error);
+      setLoading(false);
 
       Alert.alert('Não foi possível confirmar o agendamento');
     }
@@ -149,7 +152,8 @@ const SchedulingDetails: React.FC = () => {
       </Content>
       <Footer>
         <Button
-          enabled={false}
+          enabled={!loading}
+          loading={loading}
           onPress={handleConfirmRental}
           title="Alugar agora"
           color={theme.colors.success}

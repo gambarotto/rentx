@@ -1,9 +1,10 @@
-import { Dimensions } from 'react-native';
+import { Dimensions, FlatList, FlatListProps } from 'react-native';
 import styled from 'styled-components/native';
 
 interface ImageIndexProps {
   active: boolean;
 }
+
 export const Container = styled.View``;
 export const ImageIndexes = styled.View`
   flex-direction: row;
@@ -28,6 +29,15 @@ export const CarImageWrapper = styled.View`
   justify-content: center;
   align-items: center;
 `;
+export const CarPhotos = styled(
+  FlatList as new (
+    // eslint-disable-next-line no-unused-vars
+    props: FlatListProps<string>,
+  ) => FlatList<string>,
+).attrs({
+  contentContainerStyle: {},
+  showsVerticalScrollIndicator: false,
+})``;
 export const CarImage = styled.Image`
   width: 280px;
   height: 132px;
