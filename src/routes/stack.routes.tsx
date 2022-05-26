@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
+import Splash from '../screens/Splash';
 import Home from '../screens/Home';
 import CarDetails from '../screens/CarDetails';
 import Scheduling from '../screens/Scheduling';
@@ -15,6 +16,7 @@ interface RentalPeriod {
 }
 
 export type StackParamList = {
+  Splash: undefined;
   Home: undefined;
   MyCars: undefined;
   CarDetails: { car: CarDTO };
@@ -35,6 +37,7 @@ const StackRoutes: React.FC = () => (
       headerShown: false,
     }}
   >
+    <Screen name="Splash" component={Splash} />
     <Screen name="Home" component={Home} />
     <Screen name="MyCars" component={MyCars} />
     <Screen name="CarDetails" component={CarDetails} />

@@ -1,23 +1,27 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from 'styled-components';
+import Animated, {
+  useAnimatedGestureHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
+
+import { RectButton, PanGestureHandler } from 'react-native-gesture-handler';
+
 import api from '../../services/api';
 import Logo from '../../assets/logo.svg';
 import CardCar from '../../components/CardCar';
-import {
-  CarList,
-  Container,
-  Header,
-  HeaderContent,
-  TotalCars,
-  MyCarsButton,
-} from './styles';
+import { CarList, Container, Header, HeaderContent, TotalCars } from './styles';
 import { CarDTO } from '../../dtos/CarDTO';
 import Load from '../../components/Load';
+
+const ButtonAnimated = Animated.createAnimatedComponent(RectButton);
 
 const Home: React.FC = () => {
   const navigation = useNavigation();
@@ -25,6 +29,30 @@ const Home: React.FC = () => {
   const [cars, setCars] = useState<CarDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const positionX = useSharedValue(0);
+  const positionY = useSharedValue(0);
+
+  const myCarButtonStyleAnimaion = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: positionX.value },
+      { translateY: positionY.value },
+    ],
+  }));
+
+  const onGestureEvent = useAnimatedGestureHandler({
+    onStart(_, ctx: any) {
+      ctx.positionX = positionX.value;
+      ctx.positionY = positionY.value;
+    },
+    onActive(event, ctx: any) {
+      positionX.value = ctx.positionX + event.translationX;
+      positionY.value = ctx.positionY + event.translationY;
+    },
+    onEnd() {
+      positionX.value = withSpring(0);
+      positionY.value = withSpring(0);
+    },
+  });
   useEffect(() => {
     async function fetchCars(): Promise<void> {
       try {
@@ -73,11 +101,37 @@ const Home: React.FC = () => {
           )}
         />
       )}
-      <MyCarsButton onPress={handleMyCars} activeOpacity={0.8}>
-        <Ionicons name="ios-car-sport" size={32} color={theme.colors.shape} />
-      </MyCarsButton>
+      <PanGestureHandler onGestureEvent={onGestureEvent}>
+        <Animated.View
+          style={[
+            myCarButtonStyleAnimaion,
+            { position: 'absolute', bottom: 13, right: 22 },
+          ]}
+        >
+          <ButtonAnimated
+            onPress={handleMyCars}
+            style={[styles.button, { backgroundColor: theme.colors.main }]}
+          >
+            <Ionicons
+              name="ios-car-sport"
+              size={32}
+              color={theme.colors.shape}
+            />
+          </ButtonAnimated>
+        </Animated.View>
+      </PanGestureHandler>
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default Home;
