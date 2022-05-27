@@ -7,6 +7,9 @@ interface ButtonProps {
   enabled?: boolean;
   loading?: boolean;
 }
+interface TitleProps {
+  light: boolean;
+}
 
 export const Container = styled(RectButton)<ButtonProps>`
   width: 100%;
@@ -19,8 +22,9 @@ export const Container = styled(RectButton)<ButtonProps>`
   opacity: ${({ enabled, loading }) =>
     enabled === false || loading === true ? 0.5 : 1};
 `;
-export const Title = styled.Text`
+export const Title = styled.Text<TitleProps>`
   font-family: ${({ theme }) => theme.fonts.primary_500};
   font-size: ${RFValue(15)}px;
-  color: ${({ theme }) => theme.colors.shape};
+  color: ${({ theme, light }) =>
+    light ? theme.colors.header : theme.colors.shape};
 `;
