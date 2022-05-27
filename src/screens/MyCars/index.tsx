@@ -4,7 +4,7 @@ import { StatusBar } from 'react-native';
 import { useTheme } from 'styled-components';
 import BackButton from '../../components/BackButton';
 import CardCar from '../../components/CardCar';
-import Load from '../../components/Load';
+import LoadAnimation from '../../components/LoadAnimation';
 import { CarDTO } from '../../dtos/CarDTO';
 import api from '../../services/api';
 
@@ -66,7 +66,7 @@ const MyCars: React.FC = () => {
         <SubTitle>Conforto, segurança e praticidade.</SubTitle>
       </Header>
       {loading ? (
-        <Load />
+        <LoadAnimation />
       ) : (
         <Content>
           <Appoinntments>

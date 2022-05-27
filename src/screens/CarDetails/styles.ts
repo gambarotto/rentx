@@ -17,6 +17,7 @@ export const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  z-index: 5;
 `;
 export const CarImages = styled.View`
   margin-top: ${getStatusBarHeight() + 18}px;

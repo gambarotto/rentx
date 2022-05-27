@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StatusBar, StyleSheet } from 'react-native';
+import { BackHandler, StatusBar, StyleSheet } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from 'styled-components';
@@ -19,7 +19,7 @@ import Logo from '../../assets/logo.svg';
 import CardCar from '../../components/CardCar';
 import { CarList, Container, Header, HeaderContent, TotalCars } from './styles';
 import { CarDTO } from '../../dtos/CarDTO';
-import Load from '../../components/Load';
+import LoadAnimation from '../../components/LoadAnimation';
 
 const ButtonAnimated = Animated.createAnimatedComponent(RectButton);
 
@@ -52,6 +52,14 @@ const Home: React.FC = () => {
       positionX.value = withSpring(0);
       positionY.value = withSpring(0);
     },
+  });
+
+  useFocusEffect(() => {
+    const backHandlerEvent = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => true,
+    );
+    return backHandlerEvent.remove();
   });
   useEffect(() => {
     async function fetchCars(): Promise<void> {
@@ -87,11 +95,11 @@ const Home: React.FC = () => {
       <Header>
         <HeaderContent>
           <Logo width={RFValue(108)} height={RFValue(12)} />
-          <TotalCars>Total de {cars.length} carros</TotalCars>
+          {!loading && <TotalCars>Total de {cars.length} carros</TotalCars>}
         </HeaderContent>
       </Header>
       {loading ? (
-        <Load />
+        <LoadAnimation />
       ) : (
         <CarList
           data={cars}
