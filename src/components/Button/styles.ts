@@ -21,6 +21,8 @@ export const Container = styled(RectButton)<ButtonProps>`
   background-color: ${({ theme, color }) => color || theme.colors.main};
   opacity: ${({ enabled, loading }) =>
     enabled === false || loading === true ? 0.5 : 1};
+
+  margin-bottom: 8px;
 `;
 export const Title = styled.Text<TitleProps>`
   font-family: ${({ theme }) => theme.fonts.primary_500};
