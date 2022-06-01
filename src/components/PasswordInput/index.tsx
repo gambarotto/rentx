@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from 'styled-components';
 import { TextInputProps } from 'react-native';
@@ -11,19 +11,53 @@ import {
 
 interface Props extends TextInputProps {
   iconName: React.ComponentProps<typeof Feather>['name'];
+  value?: string;
 }
 
-const PasswordInput: React.FC<Props> = ({ iconName, ...rest }) => {
+const PasswordInput: React.FC<Props> = ({ iconName, value, ...rest }) => {
   const theme = useTheme();
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const [isFocused, setIsFocused] = useState(false);
+  const [isFilled, setIsFilled] = useState(false);
+
+  const handleInputFocus = useCallback(() => {
+    setIsFocused(true);
+  }, []);
+  const handleInputBlur = useCallback(() => {
+    setIsFocused(false);
+    setIsFilled(!!value);
+  }, [value]);
+
+  const handlePasswordIsVisibility = useCallback(() => {
+    setIsPasswordVisible((state) => !state);
+  }, []);
   return (
     <Container>
-      <IconContainer>
-        <Feather name={iconName} size={24} color={theme.colors.text_detail} />
+      <IconContainer isFocused={isFocused}>
+        <Feather
+          name={iconName}
+          size={24}
+          color={
+            isFocused || isFilled ? theme.colors.main : theme.colors.text_detail
+          }
+        />
       </IconContainer>
-      <InputText {...rest} />
-      <ChangePasswordVisibilityButton>
-        <IconContainer>
-          <Feather name="eye" size={24} color={theme.colors.text_detail} />
+      <InputText
+        isFocused={isFocused}
+        secureTextEntry={isPasswordVisible}
+        onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
+        {...rest}
+      />
+      <ChangePasswordVisibilityButton onPress={handlePasswordIsVisibility}>
+        <IconContainer isFocused={isFocused}>
+          <Feather
+            name={isPasswordVisible ? 'eye' : 'eye-off'}
+            size={24}
+            color={theme.colors.text_detail}
+          />
         </IconContainer>
       </ChangePasswordVisibilityButton>
     </Container>

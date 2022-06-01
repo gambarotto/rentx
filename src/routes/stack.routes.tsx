@@ -10,6 +10,8 @@ import SchedulingDetails from '../screens/SchedulingDetails';
 import SchedulingComplete from '../screens/SchedulingComplete';
 import { CarDTO } from '../dtos/CarDTO';
 import MyCars from '../screens/MyCars';
+import SignUpFirstStep from '../screens/SignUp/SignUpFirstStep';
+import SignUpSecondStep from '../screens/SignUp/SignUpSecondStep';
 
 interface RentalPeriod {
   startFormatted: string;
@@ -19,6 +21,10 @@ interface RentalPeriod {
 export type StackParamList = {
   Splash: undefined;
   SignIn: undefined;
+  SignUpFirstStep: undefined;
+  SignUpSecondStep: {
+    user: { name: string; email: string; driverLicense: string };
+  };
   Home: undefined;
   MyCars: undefined;
   CarDetails: { car: CarDTO };
@@ -42,6 +48,8 @@ const StackRoutes: React.FC = () => (
   >
     <Screen name="Splash" component={Splash} />
     <Screen name="SignIn" component={SignIn} />
+    <Screen name="SignUpFirstStep" component={SignUpFirstStep} />
+    <Screen name="SignUpSecondStep" component={SignUpSecondStep} />
     <Screen
       name="Home"
       component={Home}

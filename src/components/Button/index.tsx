@@ -7,20 +7,18 @@ import { Container, Title } from './styles';
 interface Props extends RectButtonProps {
   title: string;
   color?: string;
-  enabled?: boolean;
   loading?: boolean;
   light?: boolean;
 }
 
 const Button: React.FC<Props> = ({
   title,
-  enabled = true,
   loading = false,
   light = false,
   ...rest
 }) => {
   const theme = useTheme();
-  Object.assign(rest, { enabled, loading });
+  Object.assign(rest, { loading });
 
   return (
     <Container {...rest}>
