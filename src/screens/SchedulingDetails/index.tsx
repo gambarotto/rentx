@@ -66,7 +66,11 @@ const SchedulingDetails: React.FC = () => {
         id: car.id,
         unavailable_dates,
       });
-      navigation.navigate('SchedulingComplete');
+      navigation.navigate('Confirmation', {
+        title: 'Carro Alugado com sucesso!',
+        message: `Agora você só precisa ir\naté uma concessionária da RENTX\npegar o seu automovel.`,
+        nextScreenRoute: 'Home',
+      });
     } catch (error) {
       console.log(error);
       setLoading(false);

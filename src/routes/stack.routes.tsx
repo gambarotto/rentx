@@ -7,7 +7,7 @@ import Home from '../screens/Home';
 import CarDetails from '../screens/CarDetails';
 import Scheduling from '../screens/Scheduling';
 import SchedulingDetails from '../screens/SchedulingDetails';
-import SchedulingComplete from '../screens/SchedulingComplete';
+import Confirmation from '../screens/Confirmation';
 import { CarDTO } from '../dtos/CarDTO';
 import MyCars from '../screens/MyCars';
 import SignUpFirstStep from '../screens/SignUp/SignUpFirstStep';
@@ -34,7 +34,11 @@ export type StackParamList = {
     dates: string[];
     rentalPeriod: RentalPeriod;
   };
-  SchedulingComplete: undefined;
+  Confirmation: {
+    title: string;
+    message: string;
+    nextScreenRoute: keyof StackParamList;
+  };
 };
 
 const { Navigator, Screen } = createStackNavigator<StackParamList>();
@@ -61,7 +65,7 @@ const StackRoutes: React.FC = () => (
     <Screen name="CarDetails" component={CarDetails} />
     <Screen name="Scheduling" component={Scheduling} />
     <Screen name="SchedulingDetails" component={SchedulingDetails} />
-    <Screen name="SchedulingComplete" component={SchedulingComplete} />
+    <Screen name="Confirmation" component={Confirmation} />
   </Navigator>
 );
 export default StackRoutes;
