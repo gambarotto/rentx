@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { ViewToken } from 'react-native';
+import { PhotoCarApi } from '../../dtos/CarDTO';
 import Bullet from '../Bullet';
 import {
   Container,
@@ -10,7 +11,7 @@ import {
 } from './styles';
 
 interface Props {
-  imagesUrl: string[];
+  imagesUrl: PhotoCarApi[];
 }
 interface ChangeImageProps {
   viewableItems: ViewToken[];
@@ -28,16 +29,16 @@ const ImageSlider: React.FC<Props> = ({ imagesUrl }) => {
     <Container>
       <ImageIndexes>
         {imagesUrl.map((image, index) => (
-          <Bullet key={String(image)} active={index === imageIndex} />
+          <Bullet key={image.id} active={index === imageIndex} />
         ))}
       </ImageIndexes>
 
       <CarPhotos
         data={imagesUrl}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <CarImageWrapper>
-            <CarImage source={{ uri: item }} resizeMode="contain" />
+            <CarImage source={{ uri: item.photo }} resizeMode="contain" />
           </CarImageWrapper>
         )}
         horizontal

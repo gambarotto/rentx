@@ -1,4 +1,10 @@
-import React, { createContext, ReactNode, useCallback, useState } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
 import api from '../services/api';
 
 interface User {
@@ -26,10 +32,26 @@ interface AuthProviderProps {
 }
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-function AuthProvider({ children }: AuthProviderProps) {
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [data, setData] = useState<AuthState>({} as AuthState);
 
   const signIn = useCallback(async ({ email, password }: SighInCredentials) => {
     const response = await api.post('/sessions', { email, password });
+    if (response.data) {
+      const { token, user } = response.data;
+      api.defaults.headers.common.authorization = `Bearer ${token}`;
+      setData({ token, user });
+    }
   }, []);
-}
+  return (
+    <AuthContext.Provider value={{ user: data.user, signIn }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+const useAuth = (): AuthContextData => {
+  const context = useContext(AuthContext);
+  return context;
+};
+
+export { AuthProvider, useAuth };

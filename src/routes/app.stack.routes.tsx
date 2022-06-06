@@ -1,17 +1,12 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import SignIn from '../screens/SignIn';
-import Splash from '../screens/Splash';
 import Home from '../screens/Home';
 import CarDetails from '../screens/CarDetails';
 import Scheduling from '../screens/Scheduling';
 import SchedulingDetails from '../screens/SchedulingDetails';
 import Confirmation from '../screens/Confirmation';
 import { CarDTO } from '../dtos/CarDTO';
-import MyCars from '../screens/MyCars';
-import SignUpFirstStep from '../screens/SignUp/SignUpFirstStep';
-import SignUpSecondStep from '../screens/SignUp/SignUpSecondStep';
 
 interface RentalPeriod {
   startFormatted: string;
@@ -19,14 +14,7 @@ interface RentalPeriod {
 }
 
 export type StackParamList = {
-  Splash: undefined;
-  SignIn: undefined;
-  SignUpFirstStep: undefined;
-  SignUpSecondStep: {
-    user: { name: string; email: string; driverLicense: string };
-  };
   Home: undefined;
-  MyCars: undefined;
   CarDetails: { car: CarDTO };
   Scheduling: { car: CarDTO };
   SchedulingDetails: {
@@ -37,35 +25,24 @@ export type StackParamList = {
   Confirmation: {
     title: string;
     message: string;
-    nextScreenRoute: keyof StackParamList;
+    nextScreenRoute: any;
   };
 };
 
 const { Navigator, Screen } = createStackNavigator<StackParamList>();
 
-const StackRoutes: React.FC = () => (
+const AppStackRoutes: React.FC = () => (
   <Navigator
-    initialRouteName="SignIn"
+    initialRouteName="Home"
     screenOptions={{
       headerShown: false,
     }}
   >
-    <Screen name="Splash" component={Splash} />
-    <Screen name="SignIn" component={SignIn} />
-    <Screen name="SignUpFirstStep" component={SignUpFirstStep} />
-    <Screen name="SignUpSecondStep" component={SignUpSecondStep} />
-    <Screen
-      name="Home"
-      component={Home}
-      options={{
-        gestureEnabled: false,
-      }}
-    />
-    <Screen name="MyCars" component={MyCars} />
+    <Screen name="Home" component={Home} />
     <Screen name="CarDetails" component={CarDetails} />
     <Screen name="Scheduling" component={Scheduling} />
     <Screen name="SchedulingDetails" component={SchedulingDetails} />
     <Screen name="Confirmation" component={Confirmation} />
   </Navigator>
 );
-export default StackRoutes;
+export default AppStackRoutes;

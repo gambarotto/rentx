@@ -45,7 +45,7 @@ const Splash: React.FC = () => {
   }));
 
   const startApp = useCallback(() => {
-    navigation.navigate('Home');
+    navigation.navigate('SignIn');
   }, [navigation]);
   useEffect(() => {
     splashAnimation.value = withTiming(50, { duration: 1000 }, () => {

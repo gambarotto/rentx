@@ -2,21 +2,29 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import type { StackScreenProps } from '@react-navigation/stack';
-import StackRoutes, { StackParamList } from './stack.routes';
+import { StackParamList } from './app.stack.routes';
+import { useAuth } from '../hooks/auth';
+import AppTabRoutes, { TabParamList } from './app.tab.routes';
+import AuthRoutes, { AuthParamList } from './auth.routes';
 
-const Routes: React.FC = () => (
-  <NavigationContainer>
-    <StackRoutes />
-  </NavigationContainer>
-);
+const Routes: React.FC = () => {
+  const { user } = useAuth();
+  return (
+    <NavigationContainer>
+      {user ? <AppTabRoutes /> : <AuthRoutes />}
+    </NavigationContainer>
+  );
+};
 
 export default Routes;
 
-export type RootStackScreenProps<T extends keyof StackParamList> =
-  StackScreenProps<StackParamList, T>;
+type ScreensRoutesProps = AuthParamList & TabParamList & StackParamList;
+
+export type RootStackScreenProps<T extends keyof ScreensRoutesProps> =
+  StackScreenProps<ScreensRoutesProps, T>;
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends StackParamList {}
+    interface RootParamList extends ScreensRoutesProps {}
   }
 }

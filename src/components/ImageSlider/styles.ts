@@ -1,5 +1,6 @@
 import { Dimensions, FlatList, FlatListProps } from 'react-native';
 import styled from 'styled-components/native';
+import { PhotoCarApi } from '../../dtos/CarDTO';
 
 export const Container = styled.View``;
 export const ImageIndexes = styled.View`
@@ -17,8 +18,8 @@ export const CarImageWrapper = styled.View`
 export const CarPhotos = styled(
   FlatList as new (
     // eslint-disable-next-line no-unused-vars
-    props: FlatListProps<string>,
-  ) => FlatList<string>,
+    props: FlatListProps<PhotoCarApi>,
+  ) => FlatList<PhotoCarApi>,
 ).attrs({
   contentContainerStyle: {},
   showsVerticalScrollIndicator: false,

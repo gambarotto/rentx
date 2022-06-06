@@ -14,10 +14,12 @@ import Input from '../../components/Input';
 import PasswordInput from '../../components/PasswordInput';
 import Button from '../../components/Button';
 import { Container, Header, SubTitle, Title, Form, Footer } from './styles';
+import { useAuth } from '../../hooks/auth';
 
 const SignIn: React.FC = () => {
   const theme = useTheme();
   const { navigate } = useNavigation();
+  const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -31,6 +33,8 @@ const SignIn: React.FC = () => {
       });
 
       await schema.validate({ email, password });
+
+      signIn({ email, password });
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
         Alert.alert('Opa', error.message);
@@ -41,7 +45,7 @@ const SignIn: React.FC = () => {
         );
       }
     }
-  }, [email, password]);
+  }, [email, password, signIn]);
 
   const handleNewAccount = useCallback(async () => {
     navigate('SignUpFirstStep');
