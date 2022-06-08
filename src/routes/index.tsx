@@ -11,7 +11,7 @@ const Routes: React.FC = () => {
   const { user } = useAuth();
   return (
     <NavigationContainer>
-      {user ? <AppTabRoutes /> : <AuthRoutes />}
+      {user.id ? <AppTabRoutes /> : <AuthRoutes />}
     </NavigationContainer>
   );
 };

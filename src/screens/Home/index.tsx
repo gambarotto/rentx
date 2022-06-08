@@ -23,17 +23,25 @@ const Home: React.FC = () => {
     return backHandlerEvent.remove();
   });
   useEffect(() => {
+    let isMounted = true;
     async function fetchCars(): Promise<void> {
       try {
         const response = await api.get('/cars');
-        setCars(response.data);
+        if (isMounted) {
+          setCars(response.data);
+        }
       } catch (error) {
         console.log(error);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
     fetchCars();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleCarDetails = useCallback(
