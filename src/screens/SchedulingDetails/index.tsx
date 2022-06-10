@@ -39,9 +39,11 @@ import Button from '../../components/Button';
 import { RootStackScreenProps } from '../../routes';
 import getAccessoryIcon from '../../utils/getAccessoryIcon';
 import api from '../../services/api';
+import { useAuth } from '../../hooks/auth';
 
 const SchedulingDetails: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
   const theme = useTheme();
 
   const navigation = useNavigation();
@@ -57,7 +59,7 @@ const SchedulingDetails: React.FC = () => {
       const unavailable_dates = [...response.data.unavailable_dates, ...dates];
 
       await api.post('/schedules_byuser', {
-        user_id: 1,
+        user_id: user.id,
         car,
         startDate: rentalPeriod.startFormatted,
         endDate: rentalPeriod.endFormatted,
@@ -83,6 +85,7 @@ const SchedulingDetails: React.FC = () => {
     navigation,
     rentalPeriod.endFormatted,
     rentalPeriod.startFormatted,
+    user.id,
   ]);
 
   return (
@@ -102,8 +105,8 @@ const SchedulingDetails: React.FC = () => {
           </Description>
 
           <Rent>
-            <Period>{car.rent.period}</Period>
-            <Price>R$ {car.rent.price}</Price>
+            <Period>{car.period}</Period>
+            <Price>R$ {car.price}</Price>
           </Rent>
         </Details>
         <Accessories>
@@ -146,10 +149,10 @@ const SchedulingDetails: React.FC = () => {
           <RentalPriceLabel>TOTAL</RentalPriceLabel>
           <RentalPriceDetails>
             <RentalPriceQuota>
-              {`R$ ${car.rent.price} x${dates.length} diárias`}
+              {`R$ ${car.price} x${dates.length} diárias`}
             </RentalPriceQuota>
             <RentalPriceTotal>
-              R$ {Number(car.rent.price * dates.length)}
+              R$ {Number(car.price * dates.length)}
             </RentalPriceTotal>
           </RentalPriceDetails>
         </RentalPrice>
