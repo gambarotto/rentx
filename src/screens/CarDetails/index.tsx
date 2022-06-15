@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import Animated, {
@@ -11,6 +11,7 @@ import Animated, {
 import { StatusBar, StyleSheet } from 'react-native';
 import { useTheme } from 'styled-components';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { useNetInfo } from '@react-native-community/netinfo';
 import BackButton from '../../components/BackButton';
 import Accessory from '../../components/Accessory';
 import ImageSlider from '../../components/ImageSlider';
@@ -34,11 +35,17 @@ import {
 import Button from '../../components/Button';
 import { RootStackScreenProps } from '../../routes';
 import getAccessoryIcon from '../../utils/getAccessoryIcon';
+import { CarDTO } from '../../dtos/CarDTO';
+import api from '../../services/api';
 
 const CarDetails: React.FC = () => {
   const navigation = useNavigation();
   const theme = useTheme();
+  const netInfo = useNetInfo();
   const scrollY = useSharedValue(0);
+
+  const [carUpdated, setCarUpdated] = useState<CarDTO>({} as CarDTO);
+
   const scrollYHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
   });
@@ -56,6 +63,17 @@ const CarDetails: React.FC = () => {
     navigation.navigate('Scheduling', { car });
   }, [navigation, car]);
 
+  useEffect(() => {
+    const fetchCarUpdated = async (): Promise<void> => {
+      const response = await api.get(`/cars/${car.id}`);
+      if (response.data) {
+        setCarUpdated(response.data);
+      }
+    };
+    if (netInfo.isConnected === true) {
+      fetchCarUpdated();
+    }
+  }, [car.id, netInfo.isConnected]);
   return (
     <Container>
       <StatusBar
@@ -75,7 +93,13 @@ const CarDetails: React.FC = () => {
         </Header>
         <Animated.View style={[sliderCarsStyleAnimation]}>
           <CarImages>
-            <ImageSlider imagesUrl={car.photos} />
+            <ImageSlider
+              imagesUrl={
+                carUpdated.photos
+                  ? carUpdated.photos
+                  : [{ id: car.thumbnail, photo: car.thumbnail }]
+              }
+            />
           </CarImages>
         </Animated.View>
       </Animated.View>
@@ -97,32 +121,30 @@ const CarDetails: React.FC = () => {
 
           <Rent>
             <Period>{car.period}</Period>
-            <Price>{`R$ ${car.price}`}</Price>
+            <Price>{`R$ ${
+              netInfo.isConnected === true ? car.price : '...'
+            }`}</Price>
           </Rent>
         </Details>
-        <Accessories>
-          {car.accessories.map((accessory) => (
-            <Accessory
-              key={accessory.type}
-              name={accessory.name}
-              icon={getAccessoryIcon(accessory.type)}
-            />
-          ))}
-        </Accessories>
+        {carUpdated.accessories && (
+          <Accessories>
+            {carUpdated.accessories.map((accessory) => (
+              <Accessory
+                key={accessory.type}
+                name={accessory.name}
+                icon={getAccessoryIcon(accessory.type)}
+              />
+            ))}
+          </Accessories>
+        )}
 
-        <About>
-          {car.about}
-          {car.about}
-          {car.about}
-          {car.about}
-          {car.about}
-          {car.about}
-        </About>
+        <About>{car.about}</About>
       </Animated.ScrollView>
       <Footer>
         <Button
           title="Escolher período do aluguel"
           onPress={handleConfirmRental}
+          enabled={netInfo.isConnected === true}
         />
       </Footer>
     </Container>

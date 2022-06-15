@@ -7,8 +7,10 @@ import {
   TouchableWithoutFeedback,
   ImagePickerResult,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { useTheme } from 'styled-components';
+import * as Yup from 'yup';
 import * as ImagePicker from 'expo-image-picker';
 import { RectButton } from 'react-native-gesture-handler';
 import BackButton from '../../components/BackButton';
@@ -29,6 +31,7 @@ import {
   OptionTitle,
   Sessions,
 } from './styles';
+import Button from '../../components/Button';
 
 type OptionsProps = 'dataEdit' | 'passwordEdit';
 interface ImagePickerCustom extends ImagePickerResult {
@@ -40,11 +43,11 @@ interface ImagePickerCustom extends ImagePickerResult {
 }
 const Profile: React.FC = () => {
   const theme = useTheme();
-  const { user } = useAuth();
+  const { user, signOut, updateUser } = useAuth();
 
   const [avatar, setAvatar] = useState(user.avatar);
-  const [name, setName] = useState('');
-  const [driverLicense, setDriverLicense] = useState('');
+  const [name, setName] = useState(user.name);
+  const [driverLicense, setDriverLicense] = useState(user.driver_license);
   const [option, setOption] = useState<OptionsProps>('dataEdit');
 
   const handleOptionChange = useCallback((optionChoice: OptionsProps) => {
@@ -63,8 +66,46 @@ const Profile: React.FC = () => {
       setAvatar(uri);
     }
   }, []);
-
-  const handleSignOut = useCallback(() => {}, []);
+  const handleUpdateProfile = useCallback(async () => {
+    try {
+      const schema = Yup.object().shape({
+        driverLicense: Yup.string().required('A CNH é obrigatória'),
+        name: Yup.string().required('Nome é obrigatório'),
+      });
+      await schema.validate({ name, driverLicense });
+      await updateUser({
+        ...user,
+        name,
+        driver_license: driverLicense,
+        avatar,
+      });
+      Alert.alert('Perfil atualizado');
+    } catch (error) {
+      if (error instanceof Yup.ValidationError) {
+        Alert.alert('Opa', error.message);
+      } else {
+        Alert.alert('Não foi possivel atuaizar o perfil');
+      }
+    }
+  }, [avatar, driverLicense, name, updateUser, user]);
+  const handleSignOut = useCallback(() => {
+    Alert.alert(
+      'Tem certeza?',
+      'Se você sair precisa-rá de internet para conectar-se novamente',
+      [
+        {
+          text: 'Cancelar',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'Sair',
+          onPress: () => signOut(),
+          style: 'default',
+        },
+      ],
+    );
+  }, [signOut]);
   return (
     <KeyboardAvoidingView behavior="position" enabled>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -141,6 +182,7 @@ const Profile: React.FC = () => {
                 <PasswordInput iconName="lock" placeholder="Senha" />
               </Sessions>
             )}
+            <Button title="Salvar alterações" onPress={handleUpdateProfile} />
           </Content>
         </Container>
       </TouchableWithoutFeedback>

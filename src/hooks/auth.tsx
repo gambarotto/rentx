@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {
   createContext,
   ReactNode,
@@ -6,6 +7,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+
 import { database } from '../database';
 import api from '../services/api';
 import { User as ModelUser } from '../database/model/User';
@@ -25,8 +27,10 @@ interface SighInCredentials {
 }
 interface AuthContextData {
   user: User;
-  // eslint-disable-next-line no-unused-vars
   signIn: (credentials: SighInCredentials) => Promise<void>;
+  signOut: () => Promise<void>;
+  updateUser: (user: User) => Promise<void>;
+  loading: boolean;
 }
 interface AuthProviderProps {
   children: ReactNode;
@@ -35,23 +39,31 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [data, setData] = useState<User>({} as User);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
     const loadUserData = async (): Promise<void> => {
-      const userCollection = database.get<ModelUser>('users');
-      const response = await userCollection.query().fetch();
+      try {
+        console.log('## useAuth ##: sync user');
 
-      if (response.length > 0) {
-        // eslint-disable-next-line no-underscore-dangle
-        const userData = response[0]._raw as unknown as User;
-        api.defaults.headers.common.authorization = `Bearer ${userData.token}`;
-        if (isMounted) {
-          setData(userData);
+        const userCollection = database.get<ModelUser>('users');
+        const response = await userCollection.query().fetch();
+
+        if (response.length > 0) {
+          // eslint-disable-next-line no-underscore-dangle
+          const userData = response[0]._raw as unknown as User;
+          api.defaults.headers.common.authorization = `Bearer ${userData.token}`;
+          if (isMounted) {
+            setData(userData);
+          }
         }
+      } catch (error) {
+        console.log('## useAuth ##: error fetching user data', error);
       }
     };
     loadUserData();
+    setLoading(false);
     return () => {
       isMounted = false;
     };
@@ -81,8 +93,43 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       throw new Error(error);
     }
   }, []);
+
+  const signOut = useCallback(async () => {
+    try {
+      const userCollection = database.get<ModelUser>('users');
+      await database.write(async () => {
+        const userSelected = await userCollection.find(data.id);
+        await userSelected.destroyPermanently();
+      });
+      setData({} as User);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }, [data.id]);
+
+  const updateUser = useCallback(
+    async (user: User) => {
+      try {
+        const userCollection = database.get<ModelUser>('users');
+        await database.write(async () => {
+          const userSelected = await userCollection.find(data.id);
+          await userSelected.update((dataUser) => {
+            dataUser.name = user.name;
+            dataUser.driver_license = user.driver_license;
+            dataUser.avatar = user.avatar;
+          });
+        });
+        setData(user);
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    [data.id],
+  );
   return (
-    <AuthContext.Provider value={{ user: data, signIn }}>
+    <AuthContext.Provider
+      value={{ user: data, signIn, signOut, updateUser, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );

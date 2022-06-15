@@ -39,6 +39,8 @@ const SignIn: React.FC = () => {
       if (error instanceof Yup.ValidationError) {
         Alert.alert('Opa', error.message);
       } else {
+        console.log(error);
+
         Alert.alert(
           'Erro na Autenticação',
           'Por favor, verifique suas credenciais',

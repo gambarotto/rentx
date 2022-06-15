@@ -6,10 +6,13 @@ import { StackParamList } from './app.stack.routes';
 import { useAuth } from '../hooks/auth';
 import AppTabRoutes, { TabParamList } from './app.tab.routes';
 import AuthRoutes, { AuthParamList } from './auth.routes';
+import LoadAnimation from '../components/LoadAnimation';
 
 const Routes: React.FC = () => {
-  const { user } = useAuth();
-  return (
+  const { user, loading } = useAuth();
+  return loading ? (
+    <LoadAnimation />
+  ) : (
     <NavigationContainer>
       {user.id ? <AppTabRoutes /> : <AuthRoutes />}
     </NavigationContainer>

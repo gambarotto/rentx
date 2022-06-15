@@ -6,19 +6,27 @@ import CarDetails from '../screens/CarDetails';
 import Scheduling from '../screens/Scheduling';
 import SchedulingDetails from '../screens/SchedulingDetails';
 import Confirmation from '../screens/Confirmation';
-import { CarDTO } from '../dtos/CarDTO';
 
 interface RentalPeriod {
   startFormatted: string;
   endFormatted: string;
 }
-
+interface CarModelCustom {
+  id: string;
+  name: string;
+  brand: string;
+  about: string;
+  fuel_type: string;
+  period: string;
+  thumbnail: string;
+  price: number;
+}
 export type StackParamList = {
   Home: undefined;
-  CarDetails: { car: CarDTO };
-  Scheduling: { car: CarDTO };
+  CarDetails: { car: CarModelCustom };
+  Scheduling: { car: CarModelCustom };
   SchedulingDetails: {
-    car: CarDTO;
+    car: CarModelCustom;
     dates: string[];
     rentalPeriod: RentalPeriod;
   };
