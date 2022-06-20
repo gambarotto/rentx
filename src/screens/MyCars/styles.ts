@@ -2,7 +2,7 @@ import { FlatList, FlatListProps } from 'react-native';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
-import { CarProps } from '.';
+import { DataProps } from '.';
 
 export const Container = styled.View`
   flex: 1;
@@ -62,8 +62,8 @@ export const AppoinntmentsQuantity = styled.Text`
 export const CarList = styled(
   FlatList as new (
     // eslint-disable-next-line no-unused-vars
-    props: FlatListProps<CarProps>,
-  ) => FlatList<CarProps>,
+    props: FlatListProps<DataProps>,
+  ) => FlatList<DataProps>,
 ).attrs({
   contentContainerStyle: {},
   showsVerticalScrollIndicator: false,

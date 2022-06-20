@@ -29,6 +29,7 @@ import {
   Price,
   Accessories,
   About,
+  OfflineInfo,
   Footer,
 } from './styles';
 
@@ -146,6 +147,11 @@ const CarDetails: React.FC = () => {
           onPress={handleConfirmRental}
           enabled={netInfo.isConnected === true}
         />
+        {netInfo.isConnected === false && (
+          <OfflineInfo>
+            Conecte-se a internet para ver mais detalhes e agendar seu carro
+          </OfflineInfo>
+        )}
       </Footer>
     </Container>
   );

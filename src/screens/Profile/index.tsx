@@ -13,6 +13,7 @@ import { useTheme } from 'styled-components';
 import * as Yup from 'yup';
 import * as ImagePicker from 'expo-image-picker';
 import { RectButton } from 'react-native-gesture-handler';
+import { useNetInfo } from '@react-native-community/netinfo';
 import BackButton from '../../components/BackButton';
 import Input from '../../components/Input';
 import PasswordInput from '../../components/PasswordInput';
@@ -43,6 +44,7 @@ interface ImagePickerCustom extends ImagePickerResult {
 }
 const Profile: React.FC = () => {
   const theme = useTheme();
+  const netInfo = useNetInfo();
   const { user, signOut, updateUser } = useAuth();
 
   const [avatar, setAvatar] = useState(user.avatar);
@@ -50,9 +52,19 @@ const Profile: React.FC = () => {
   const [driverLicense, setDriverLicense] = useState(user.driver_license);
   const [option, setOption] = useState<OptionsProps>('dataEdit');
 
-  const handleOptionChange = useCallback((optionChoice: OptionsProps) => {
-    setOption(optionChoice);
-  }, []);
+  const handleOptionChange = useCallback(
+    (optionChoice: OptionsProps) => {
+      if (!netInfo.isConnected === true && optionChoice === 'passwordEdit') {
+        Alert.alert(
+          'Você esta offline',
+          'Para mudar a senha, conecte-se a internet',
+        );
+      } else {
+        setOption(optionChoice);
+      }
+    },
+    [netInfo.isConnected],
+  );
   const handleAvatarSelect = useCallback(async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,

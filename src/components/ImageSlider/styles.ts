@@ -1,5 +1,6 @@
 import { Dimensions, FlatList, FlatListProps } from 'react-native';
 import styled from 'styled-components/native';
+import FastImage from 'react-native-fast-image';
 import { PhotoCarApi } from '../../dtos/CarDTO';
 
 export const Container = styled.View``;
@@ -24,7 +25,7 @@ export const CarPhotos = styled(
   contentContainerStyle: {},
   showsVerticalScrollIndicator: false,
 })``;
-export const CarImage = styled.Image`
+export const CarImage = styled(FastImage)`
   width: 280px;
   height: 132px;
 `;
